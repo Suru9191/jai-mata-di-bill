@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JAI MATA DI APARTMENT</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table,
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .button-container {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>JAI MATA DI APARTMENT</h1>
+
+    <div id="ownerDetails">
+      <h3>Owner Details</h3>
+      <div class="form-group">
+        <label for="ownerName">Owner Name:</label>
+        <input type="text" id="ownerName" class="form-control" placeholder="Enter owner's name">
+      </div>
+      
+      <div class="form-group">
+        <label for="roomNumber">Room Number:</label>
+        <input type="text" id="roomNumber" class="form-control" placeholder="Enter room number">
+      </div>
+
+      <div class="form-group">
+        <label for="ownerAddress">Owner Address:</label>
+        <select id="ownerAddress" class="form-control">
+          <option value="JAI MATA DI APT PRAGATI NAGAR HT ROAD NEAR GAJJANAND SCHOOL NALLASOPARA EAST 401209">JAI MATA
+            DI APT PRAGATI NAGAR HT ROAD NEAR GAJJANAND SCHOOL NALLASOPARA EAST 401209</option>
+          <!-- Add other address options if needed -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="ownerEmail">Owner Email:</label>
+        <input type="email" id="ownerEmail" class="form-control" placeholder="Enter owner's email">
+      </div>
+      <div class="form-group">
+        <label for="ownerPhone">Owner Phone:</label>
+        <input type="tel" id="ownerPhone" class="form-control" placeholder="Enter owner's phone">
+      </div>
+      <div class="form-group">
+        <label for="billingDate">Billing Date:</label>
+        <input type="date" id="billingDate" class="form-control" placeholder="Enter date">
+      </div>
+      <button onclick="addOwner()" class="btn btn-primary">Add Owner</button>
+    </div>
+    <h3>Maintenance & Repair Items</h3>
+    <div class="button-container">
+      <button onclick="addRow()" class="btn btn-success">Add Item</button>
+      <button onclick="printBill()" class="btn btn-primary">Print Bill</button>
+      <button onclick="saveAsPDF()" class="btn btn-info">Save PDF</button>
+    </div>
+    <table id="itemsTable">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Quantity</th>
+          <th>Amount</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody id="itemsTableBody">
+        <!-- Table rows will be dynamically populated -->
+      </tbody>
+    </table>
+    <div id="billSummaryContainer">
+      <!-- Bill summary will be displayed here -->
+    </div>
+  </div>
+  <footer style="margin: auto; background-color: black; color: #ddd; text-align: center;">
+    Software built by SURAJ C PANDEY
+  </footer>
+  <script>
+    function addRow() {
+      var tableBody = document.getElementById("itemsTableBody");
+      var newRow = tableBody.insertRow();
+
+      var descriptionSelect = `
+        <select class="form-control">
+          <option value="Maintenance">Maintenance</option>
+          <option value="Seeking Fund">Seeking Fund</option>
+          <option value="Parking Charge">Parking Charge</option>
+          <option value="Chamber Renovation">Chamber Renovation</option>
+          <option value="Chamber Cleaning">Chamber Cleaning</option>
+          <option value="Repairing Fund">Repairing Fund</option>
+          <option value="Extra Water">Extra Water</option>
+          <option value="Other">Other</option>
+        </select>
+      `;
+
+      newRow.innerHTML = `
+        <td>${descriptionSelect}</td>
+        <td><input type="number" class="form-control" min="1" value="1" onchange="calculateTotal(this)"></td>
+        <td><input type="number" class="form-control" min="0.01" step="0.01" value="0" onchange="calculateTotal(this)"></td>
+        <td><span class="totalAmount">0.00</span> INR</td>
+      `;
+    }
+
+    function calculateTotal(input) {
+      var row = input.closest("tr");
+      var quantity = parseFloat(row.querySelector("input[type='number']").value);
+      var unitPrice = parseFloat(row.querySelectorAll("input[type='number']")[1].value);
+      var totalAmount = (quantity * unitPrice).toFixed(2);
+      row.querySelector(".totalAmount").textContent = totalAmount;
+    }
+
+    function addOwner() {
+      var ownerName = document.getElementById("ownerName").value.trim();
+      var roomNumber = document.getElementById("roomNumber").value.trim();
+      var ownerAddress = document.getElementById("ownerAddress").value.trim();
+      var ownerEmail = document.getElementById("ownerEmail").value.trim();
+      var ownerPhone = document.getElementById("ownerPhone").value.trim();
+      var billingDate = document.getElementById("billingDate").value.trim();
+
+      if (!ownerName || !roomNumber || !ownerAddress || !ownerEmail || !ownerPhone || !billingDate) {
+        alert("Please enter all owner details including room number and billing date.");
+        return;
+      }
+
+      var formattedDate = new Date(billingDate).toLocaleDateString('en-GB'); // Format date as dd-mm-yyyy
+
+      var ownerDetails = `
+        <div><strong>Owner Name:</strong> ${ownerName}</div>
+        <div><strong>Room Number:</strong> ${roomNumber}</div>
+        <div><strong>Address:</strong> ${ownerAddress}</div>
+        <div><strong>Email:</strong> ${ownerEmail}</div>
+        <div><strong>Phone:</strong> ${ownerPhone}</div>
+        <div><strong>Billing Date:</strong> ${formattedDate}</div>
+      `;
+
+      var billSummaryContainer = document.getElementById("billSummaryContainer");
+      billSummaryContainer.innerHTML = ownerDetails;
+    }
+
+    function printBill() {
+      var ownerDetails = document.getElementById("billSummaryContainer").innerHTML;
+      var itemsTableBody = document.getElementById("itemsTableBody");
+      var rows = itemsTableBody.querySelectorAll("tr");
+
+      var itemsTableContent = "";
+      var totalAmount = 0;
+
+      rows.forEach(row => {
+        var description = row.cells[0].querySelector("select").value;
+        var quantity = parseFloat(row.cells[1].querySelector("input").value);
+        var amount = parseFloat(row.cells[2].querySelector("input").value);
+        var rowTotal = quantity * amount;
+        totalAmount += rowTotal;
+
+        itemsTableContent += `
+          <tr>
+            <td>${description}</td>
+            <td>${quantity}</td>
+            <td>${amount.toFixed(2)}</td>
+            <td>${rowTotal.toFixed(2)}</td>
+          </tr>
+        `;
+      });
+
+      var billContent = `
+        <div><strong>Owner Details:</strong></div>
+        <div>${ownerDetails}</div>
+        <br>
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Quantity</th>
+              <th>Amount</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsTableContent}
+          </tbody>
+        </table>
+        <div><strong>Total Amount:</strong> ${totalAmount.toFixed(2)} INR</div>
+      `;
+
+      displayBillContent(billContent);
+    }
+
+    function displayBillContent(content) {
+      var printWindow = window.open("", "_blank");
+      var stampSignatureSrc = "path/to/stamp_and_signature.png"; // Update with your image source
+
+      printWindow.document.write(`
+    <html>
+      <head>
+        <title>INVOICE BILL</title>
+        <style>
+          body { font-family: Arial, sans-serif; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          table, th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          th { background-color: #f2f2f2; }
+          footer { margin: auto; background-color: black; color: #ddd; text-align: center; position: fixed; bottom: 0; width: 100%; }
+          .stamp-signature { position: absolute; bottom: 20px; left: 20px; }
+        </style>
+      </head>
+      <body>
+        <h1>JAI MATA DI APARTMENT</h1>
+        <h4>Reg.no.MAHA-709/2022/PALGHAR</h4>
+        <div id="billDetails">${content}</div>
+        <img src="78.png" class="stamp-signature" width="300" height="300" alt="Stamp & Signature">
+        <footer>Software built by SURAJ C PANDEY</footer>
+      </body>
+    </html>
+  `);
+      printWindow.document.close();
+    }
+
+
+    function saveAsPDF() {
+      var billContent = getBillContent();
+      var ownerName = document.getElementById("ownerName").value.trim();
+      var fileName = "bill_" + ownerName + ".pdf";
+      var doc = new jsPDF();
+
+      doc.html(billContent, {
+        callback: function (doc) {
+          doc.save(fileName);
+        },
+        x: 10,
+        y: 10
+      });
+    }
+
+    function getBillContent() {
+      var ownerName = document.getElementById("ownerName").value.trim();
+      var roomNumber = document.getElementById("roomNumber").value.trim();
+      var ownerAddress = document.getElementById("ownerAddress").value.trim();
+      var ownerEmail = document.getElementById("ownerEmail").value.trim();
+      var ownerPhone = document.getElementById("ownerPhone").value.trim();
+      var billingDate = document.getElementById("billingDate").value.trim();
+
+      var formattedDate = new Date(billingDate).toLocaleDateString('en-GB'); // Format date as dd-mm-yyyy
+
+      var itemsTable = document.getElementById("itemsTableBody").innerHTML;
+      var totalAmount = 0;
+      var rows = document.querySelectorAll("#itemsTableBody tr");
+
+      rows.forEach(row => {
+        var quantity = parseFloat(row.cells[1].querySelector("input").value);
+        var amount = parseFloat(row.cells[2].querySelector("input").value);
+        var rowTotal = quantity * amount;
+        totalAmount += rowTotal;
+      });
+
+      var billContent = `
+        <div><strong>Owner Name:</strong> ${ownerName}</div>
+        <div><strong>Room Number:</strong> ${roomNumber}</div>
+        <div><strong>Address:</strong> ${ownerAddress}</div>
+        <div><strong>Email:</strong> ${ownerEmail}</div>
+        <div><strong>Phone:</strong> ${ownerPhone}</div>
+        <div><strong>Billing Date:</strong> ${formattedDate}</div>
+        <br>
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Quantity</th>
+              <th>Amount</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${itemsTable}
+          </tbody>
+        </table>
+        <div><strong>Total Amount:</strong> ${totalAmount.toFixed(2)} INR</div>
+      `;
+
+      return billContent;
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+</body>
+
+</html>
